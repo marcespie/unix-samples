@@ -1,3 +1,4 @@
+// check that error handling actually works
 #include <unistd.h>
 #include <err.h>
 #include <sys/wait.h>
@@ -11,7 +12,11 @@
 void
 perform_computation(int i)
 {
-	printf("%d is %d\n", i, i * i);
+	printf("Square of %d is %d\n", i, i * i);
+	if (i % 17 == 0)
+		exit(1);
+	if (i % 25 == 0)
+		kill(getpid(), SIGINT);
 }
 
 // we have to tweak decode_status to keep going
@@ -38,10 +43,7 @@ bad_status(int status)
 int
 main()
 {
-	// XXX exercise C buffering: by default stdout is line-buffered on
-	// a tty, and fully buffered on a fd, so stuff printed BEFORE the fork
-	// *doesn't* go out and gets duplicated
-	printf("Square of ");
+
 	for (int i = 15; i < 550; i += 2) {
 		int pid = fork();
 		switch(pid) {
@@ -66,10 +68,6 @@ main()
 	if (errno != ECHILD) // okay we reaped every child
 		err(1, "wait");
 
-	// XXX and of course, we still have "Square of" to print in the
-	// main process
-	// but exit is not a syscall! it does flush stdout and friends
-	// before exiting
-	_exit(rc);
+	exit(rc);
 }
 

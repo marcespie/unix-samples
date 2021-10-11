@@ -11,6 +11,8 @@
 void
 perform_computation(int i)
 {
+	// XXX this works because the message is small enough, so it
+	// does not get "interleaved between several processes
 	printf("Square of %d is %d\n", i, i * i);
 }
 

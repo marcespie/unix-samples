@@ -39,6 +39,8 @@ main()
 	// decode status
 	// some similar code is *required* each time you interact with
 	// children
+	// -> we have some simple communication back from child to parent
+	// which is whether we succeeded or not
 	if (WIFEXITED(status)) {
 		int rc = WEXITSTATUS(status);
 		if (rc == 0) {
