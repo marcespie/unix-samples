@@ -20,7 +20,7 @@ decode_status(int status)
 		int rc = WEXITSTATUS(status);
 		if (rc == 0)
 			return;
-		else
+		else {
 			fprintf(stderr, "Child exited with exit(%d)\n", rc);
 			exit(1);
 		}
