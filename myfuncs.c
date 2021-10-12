@@ -28,6 +28,24 @@ safe_write(int fd,
 	// write will *never* returns 0
 }
 
+// NEVER put magic numbers directly in the code, ALWAYS name them
+#define MYSIZE 1024
+void
+print_from(int fd)
+{
+	char buf[MYSIZE];
+	while (1) {
+		ssize_t r;
+		errwrap(r = read(fd, buf, MYSIZE));
+		if (r == 0)
+			break;
+		// by contrast standard output is ALWAYS fd 1
+		// some people use STDOUT_FILENO, but unless your code
+		// is really confusing, it's not really needed
+		safe_write(1, buf, r);
+	}
+}
+
 bool 
 bad_status(int status, int pid)
 {

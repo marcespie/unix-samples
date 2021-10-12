@@ -6,3 +6,5 @@ fork3bad2.c -> removing atomicity of printf
 fork4.c -> some fairly horrible code that works because of how stdio works
 fork5.c -> a simple variation of error handling with passthru
 fork6.c -> some more simple puzzle pieces with fork
+
+pipe1.c -> use a pipe to talk back to the parent
