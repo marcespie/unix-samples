@@ -11,7 +11,7 @@
 
 #include "myfuncs.h"
 
-// we're getting closer to actual cod3
+// we're getting closer to actual code
 
 // message passing through pipes: we can pass binary data without issue
 // it's *more annoying* to debug than text data, but we don't have to

@@ -11,20 +11,11 @@
 
 #include "myfuncs.h"
 
-// we're getting closer to actual cod3
-
-// message passing through pipes: we can pass binary data without issue
-// it's *more annoying* to debug than text data, but we don't have to
-// do *anything* to it (same box, same endianess, no alignment issue)
-
-// we send back our pid (one single pipe) to differentiate results
 struct data {
 	int pid;
 	int result;
 };
 
-// if things are small enough, there won't be *any* interleaving
-// it's *guaranteed* that small writes make it thru a pipe
 void
 perform_computation(int pid, int v, int fd)
 {
@@ -36,15 +27,6 @@ perform_computation(int pid, int v, int fd)
 }
 
 
-// choice: for longer/more complex computations, we can associate one
-// pipe *per process*, but we have to either poll the pipes, OR get the
-// result from each child sequentially
-// one single pipe + demultiplexing means we get data easily
-
-
-// systems programming involves data structures and algorithms:
-// we need some kind of registry per-pid to remember what child is handling
-// which computation
 struct myproc {
 	int pid;
 	int v;
@@ -92,24 +74,20 @@ main()
 	}
 	errwrap(close(pip[0]));
 
-	// we actually get errors in two ways:
-	// - we read the results from pipe, and missing pid will stay
-	// with result == -1
 	while (true) {
 		struct data d;
 		ssize_t r;
 		errwrap(r = read(pip[1], &d, sizeof d));
-		if (r == 0) // it's often simpler to code "exit loop in
-			    // the middle" rather than add arbitrary bool
+		if (r == 0) 
 			break;
-		// match pipe data to required computation
 		struct myproc *p = lookup(d.pid);
 		p->result = d.result;
+		// XXX so we just output the results "out of order"
+		printf("Result for v=%d is %d\n",
+		    p->v, p->result);
 	}
 
 	errwrap(close(pip[1]));
-	// - or we get the error when we read the status from our dead child
-	// (note that exit from child + no result is the "normal" case
 	int rc = 0;
 	int status, pid;
 	while ((pid = wait(&status)) != -1) {
@@ -121,7 +99,6 @@ main()
 	if (errno != ECHILD)
 		err(1, "wait");
 
-	// new part: check what part of our data structure is still unfilled
 	for (i = 0; i != MYPROCS; i++) {
 		struct myproc *p = allprocs+i;
 		if (p->pid != -1) {
@@ -132,9 +109,6 @@ main()
 			fprintf(stderr, "error: no result for v=%d\n", 
 			    p->v);
 		}
-		printf("Result for v=%d is %d\n",
-		    p->v, p->result);
 	}
 	exit(rc);
 }
-
