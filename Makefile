@@ -1,5 +1,5 @@
 ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork4 fork5 fork6 \
-	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1
+	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1 server2
 
 FORK6OBJS = myfuncs.o fork6.o
 PIPE1OBJS = myfuncs.o pipe1.o
@@ -9,6 +9,7 @@ PIPE3OBJS = myfuncs.o pipe3.o
 PIPE4OBJS = myfuncs.o pipe4.o
 PIPE4BADOBJS = myfuncs.o pipe4bad.o
 SERVER1OBJS = myfuncs.o server1.o
+SERVER2OBJS = myfuncs.o server2.o
 
 all: ${ALLPROGS}
 
@@ -35,6 +36,10 @@ pipe4bad: ${PIPE4BADOBJS}
 
 server1: ${SERVER1OBJS}
 	${CC} -o $@ ${CFLAGS} ${SERVER1OBJS}
+
+server2: ${SERVER2OBJS}
+	${CC} -o $@ ${CFLAGS} ${SERVER2OBJS}
+
 clean:
 	-rm -f ${ALLPROGS} *.o
 

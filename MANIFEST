@@ -14,3 +14,4 @@ pipe4.c -> now we can go back to explicitly waiting on our children
 pipe4bad.c -> inject fault (hung child) to see how we fare
 
 server1.c -> trivial (bad) server example
+server2.c -> delegating stuff to external program: exec + dup2
