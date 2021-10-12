@@ -1,3 +1,4 @@
+// inject fault (hung child) to see how we fare
 #include <unistd.h>
 #include <err.h>	
 #include <sys/wait.h>
@@ -9,9 +10,6 @@
 #include <errno.h>
 
 #include "myfuncs.h"
-
-// one cool thing with having one pipe is that we can display/process
-// results on the fly
 
 struct data {
 	int pid;
@@ -31,13 +29,14 @@ perform_computation(int pid, int v, int fd)
 	safe_write(fd, &d, sizeof d);
 }
 
+
 struct myproc {
 	int pid;
 	int v;
 	int result;
 };
 
-#define MYPROCS 150
+#define MYPROCS 10
 struct myproc allprocs[MYPROCS];
 
 struct myproc * 
@@ -47,7 +46,6 @@ lookup(int pid)
 	for (i = 0; i != MYPROCS; i++)
 		if (allprocs[i].pid == pid)
 			return allprocs+i;
-	// should never happen
 	fprintf(stderr, "Fatal error: pid %d not found\n", pid);
 	exit(1);
 }
@@ -56,59 +54,43 @@ int
 main()
 {
 
-	int r, pip[2];
-	r = pipe(pip);
-	if (r == -1)
-		err(1, "pipe");
+	int pip[2];
+	errwrap(pipe(pip));
 
 	int i;
-	// straightforward: start all computations, and record them
 	for (i = 0; i != MYPROCS; i++) {
 		struct myproc *p = allprocs + i;
-		int pid = fork();
 		int v = rand() % 200;
-		switch(pid) {
-		case -1: 
-			err(1, "fork");
-		case 0:
-			// XXX ALWAYS close the side of the pipe you don't want
-			if (close(pip[1]) == -1)
-				err(1, "close");
+		int pid;
+		errwrap(pid = fork());
+		if (pid == 0) {
+			errwrap(close(pip[1]));
 			perform_computation(getpid(), v, pip[0]);
 			exit(0);
 		}
+		// father
 		p->pid = pid;
 		p->v = v;
 		p->result = -1;
 	}
-	// father side
-	if (close(pip[0]) == -1)
-		err(1, "close");
+	errwrap(close(pip[0]));
 
-	// we actually get errors in two ways:
-	// - we read the results from pipe, and missing pid will stay
-	// with result == -1
 	while (true) {
 		struct data d;
-		ssize_t r = read(pip[1], &d, sizeof d);
-		if (r == -1)
-			err(1, "read from pipe");
-		if (r == 0)
+		ssize_t r;
+		errwrap(r = read(pip[1], &d, sizeof d));
+		if (r == 0) 
 			break;
 		struct myproc *p = lookup(d.pid);
 		p->result = d.result;
-		printf("Result for v=%d is %d\n", p->v, p->result);
+		printf("Result for v=%d is %d\n",
+		    p->v, p->result);
 	}
 
-	if (close(pip[1]) == -1)
-		err(1, "close");
-
-	// so at this point we got all results we possibly could
-	// AND we have a table of *all* pids we want to handle
-	// so we can got back to waitpid, with a twist
+	errwrap(close(pip[1]));
 	int rc = 0;
-	int status;
 	for (i = 0; i != MYPROCS; i++) {
+		int status;
 		struct myproc *p = allprocs+i;
 
 		int flags = 0;
@@ -129,4 +111,3 @@ main()
 	}
 	exit(rc);
 }
-
