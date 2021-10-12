@@ -12,3 +12,5 @@ pipe2.c -> actually send structured data back
 pipe3.c -> demonstrate showing the results as we get them
 pipe4.c -> now we can go back to explicitly waiting on our children
 pipe4bad.c -> inject fault (hung child) to see how we fare
+
+server1.c -> trivial (bad) server example
