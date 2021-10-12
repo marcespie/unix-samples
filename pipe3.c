@@ -22,7 +22,6 @@ perform_computation(int pid, int v, int fd)
 	struct data d;
 	d.pid = pid;
 	d.result = v * v;
-	// safe_write is not strictly necessary, but hey belt & suspendwer
 	safe_write(fd, &d, sizeof d);
 }
 
@@ -43,7 +42,6 @@ lookup(int pid)
 	for (i = 0; i != MYPROCS; i++)
 		if (allprocs[i].pid == pid)
 			return allprocs+i;
-	// should never happen
 	fprintf(stderr, "Fatal error: pid %d not found\n", pid);
 	exit(1);
 }
