@@ -9,3 +9,4 @@ fork6.c -> some more simple puzzle pieces with fork
 
 pipe1.c -> use a pipe to talk back to the parent
 pipe2.c -> actually send structured data back
+pipe3.c -> demonstrate showing the results as we get them
