@@ -47,7 +47,7 @@ main()
 		perform_computation(i);
 		exit(0);
 	}
-	// father
+	// parent
 	int status;
 	int r = waitpid(pid, &status, 0);
 	if (r == -1)

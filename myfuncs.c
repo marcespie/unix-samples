@@ -17,9 +17,8 @@ safe_write(int fd,
 	// arithmetic
 	const char *b = buf;
 	while (sz != 0) {
-		ssize_t r = write(fd, b, sz);
-		if (r == -1)
-			err(1, "write");
+		ssize_t r;
+		errwrap(r = write(fd, b, sz));
 		assert(r <= sz);
 		b += r;
 		sz -= r;

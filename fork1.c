@@ -29,7 +29,7 @@ main()
 	default:
 		break;
 	}
-	// this is purely the father's code
+	// this is purely the parent's code
 	int status;
 	// always check *all* syscalls for errors
 	// always use waitpid *even if you have one single child*

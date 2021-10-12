@@ -57,7 +57,7 @@ main()
 		}
 	}
 
-	// father
+	// parent
 	int rc = 0; // by default we succeed
 
 	int status, r;

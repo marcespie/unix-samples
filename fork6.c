@@ -1,4 +1,4 @@
-// some more puzzle pieces with fork
+// some more simple puzzle pieces with fork
 #include <unistd.h>
 #include <err.h>
 #include <sys/wait.h>
@@ -23,11 +23,9 @@ main()
 	// fork doesn't know anything about stdin
 	fflush(NULL);
 	for (int i = 15; i < 35; i += 2) {
-		int pid = fork();
-		switch(pid) {
-		case -1: 
-			err(1, "fork");
-		case 0:
+		int pid;
+		errwrap(pid = fork());
+		if (pid == 0) {
 			perform_computation(i);
 			exit(0);
 		}
