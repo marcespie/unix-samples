@@ -1,4 +1,4 @@
-// several children, simple case
+// what goes wrong when you do separate writes
 #include <unistd.h>
 #include <err.h>
 #include <sys/wait.h>
@@ -38,8 +38,6 @@ bad_status(int status)
 		fprintf(stderr, "Child exited with signal %d (%s)\n", 
 		    sig, strsignal(sig));
 	} else
-		// under normal circumstances, you either get a signal
-		// or an exit status
 		fprintf(stderr, "This should never happen: %d\n", status);
 	return true;
 }
@@ -59,19 +57,16 @@ main()
 		}
 	}
 
+	// father
 	int rc = 0; // by default we succeed
 
-	// this is purely the father's code
 	int status, r;
-	// always check *all* syscalls for errors
-	// simple case where we reap all children
-	// because we don't want to bother with additional data structure
 	while ((r = wait(&status)) != -1)
 		if (bad_status(status))
 			rc = 1;
-	if (errno != ECHILD) // okay we reaped every child
+	// this normally exits with ECHILD, when we reaped every child
+	if (errno != ECHILD)
 		err(1, "wait");
 
 	exit(rc);
 }
-

@@ -1,6 +1,6 @@
-// always minimize includes, since C has one single namespace
+// lifting out the error handling code into a separate function
 #include <unistd.h>
-#include <err.h>	// this is more or less standard these days
+#include <err.h>
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -12,7 +12,6 @@ perform_computation(int i)
 	printf("Square of %d is %d\n", i, i * i);
 }
 
-// lift the handling code into a separate function
 void 
 decode_status(int status)
 {
@@ -39,9 +38,7 @@ decode_status(int status)
 int
 main()
 {
-	int i = 15; // XXX implicit communication
-	// since fork() gives you a CC of the parent,
-	// -> you get implicit parameter passing to the child
+	int i = 15;
 	int pid = fork();
 	switch(pid) {
 	case -1: 
@@ -49,18 +46,12 @@ main()
 	case 0:
 		perform_computation(i);
 		exit(0);
-	default:
-		break;
 	}
-	// this is purely the father's code
+	// father
 	int status;
-	// always check *all* syscalls for errors
-	// always use waitpid *even if you have one single child*
-	// (you never know when you're going to reuse your code)
 	int r = waitpid(pid, &status, 0);
 	if (r == -1)
 		err(1, "waitpid");
-	// decode status
 	decode_status(status);
 	exit(0);
 }

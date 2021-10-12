@@ -1,0 +1,7 @@
+fork1.c -> simple usage of fork and decoding of status
+fork2.c -> lifting out the usage code into a separate function
+fork3.c -> handling several simple children
+fork3bad.c -> checking that error checking works by injecting faults
+fork3bad2.c -> removing atomicity of printf
+fork4.c -> some fairly horrible code that works because of how stdio works
+fork5.c -> a simple variation of error handling with passthru

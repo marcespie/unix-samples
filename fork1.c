@@ -1,3 +1,4 @@
+// simple usage of fork and decoding of status
 // always minimize includes, since C has one single namespace
 #include <unistd.h>
 #include <err.h>	// this is more or less standard these days

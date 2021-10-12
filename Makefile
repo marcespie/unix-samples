@@ -21,6 +21,7 @@ pipe5: ${PIPE5OBJS}
 pipe5bad: ${PIPE5BADOBJS}
 	${CC} -o $@ ${CFLAGS} ${PIPE5BADOBJS}
 
+CFLAGS = -static -O2 -Wall
 clean:
 	-rm -f ${ALLPROGS} ${PIPE3OBJS} ${PIPE4OBJS}
 
