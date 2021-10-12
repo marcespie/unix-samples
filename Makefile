@@ -33,6 +33,6 @@ pipe4bad: ${PIPE4BADOBJS}
 	${CC} -o $@ ${CFLAGS} ${PIPE4BADOBJS}
 
 clean:
-	-rm -f ${ALLPROGS} *,o
+	-rm -f ${ALLPROGS} *.o
 
 .PHONY: all clean
