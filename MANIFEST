@@ -8,3 +8,4 @@ fork5.c -> a simple variation of error handling with passthru
 fork6.c -> some more simple puzzle pieces with fork
 
 pipe1.c -> use a pipe to talk back to the parent
+pipe2.c -> actually send structured data back
