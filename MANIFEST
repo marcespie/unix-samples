@@ -15,3 +15,5 @@ pipe4bad.c -> inject fault (hung child) to see how we fare
 
 server1.c -> trivial (bad) server example
 server2.c -> delegating stuff to external program: exec + dup2
+server3.c -> setsockopt + debug mode
+server4.c -> modern internet
