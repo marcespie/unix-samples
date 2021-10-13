@@ -17,6 +17,7 @@ SERVER5OBJS = myfuncs.o server5.o
 SERVER6OBJS = myfuncs.o server6.o
 SERVER7OBJS = myfuncs.o server7.o
 SERVER8OBJS = myfuncs.o server8.o
+CHAT1OBJS = myfuncs.o chat1.o
 
 all: ${ALLPROGS}
 
@@ -65,6 +66,8 @@ server7: ${SERVER7OBJS}
 server8: ${SERVER8OBJS}
 	${CC} -o $@ ${CFLAGS} ${SERVER8OBJS}
 
+chat1: ${CHAT1OBJS}
+	${CC} -o $@ ${CFLAGS} ${CHAT1OBJS}
 clean:
 	-rm -f ${ALLPROGS} *.o
 
