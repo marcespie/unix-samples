@@ -1,8 +1,9 @@
-// modern internet !
+// with an actual signal handler
 #include <stdbool.h>
 #include <err.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/wait.h>
 #include <netdb.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -11,13 +12,14 @@
 #include <signal.h>
 #include <getopt.h>
 #include <string.h>
+#include <errno.h>
 
 #include "myfuncs.h"
 
 void
 usage()
 {
-	errx(1, "Usage: server4 [-d] service");
+	errx(1, "Usage: server5 [-d] service");
 }
 
 int 
@@ -76,6 +78,19 @@ create_server(const char *service, bool debug)
 	return s;
 }
 
+void 
+reaper(int sig)
+{
+	int save_errno = errno;
+	int pid, status;
+	while ((pid = wait3(&status, WNOHANG, NULL)) >= 0) {
+		bad_status(status, pid);
+	}
+	if (pid == -1 && errno != ECHILD)
+		err(1, "wait3");
+	errno = save_errno;
+}
+
 int
 main(int argc, char *argv[])
 {
@@ -97,7 +112,7 @@ main(int argc, char *argv[])
 	if (argc != 1)
 		usage();
 	int s = create_server(argv[0], debug);
-	signal(SIGCHLD, SIG_IGN);
+	signal(SIGCHLD, reaper);
 	while (1) {
 		int fd;
 

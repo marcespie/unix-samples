@@ -46,9 +46,8 @@ main(int argc, char *argv[])
 {
 	if (argc < 2)
 		errx(1, "pass port number as a parameter");
-	// XXX we should properly use strtol and check for error
 	int port = atoi(argv[1]);
-	if (port == 0)
+	if (port <= 0)
 		errx(1, "%s is not a valid port", argv[1]);
 
 	if (port < 1024 && getuid() != 0)
@@ -62,7 +61,6 @@ main(int argc, char *argv[])
 	while (1) {
 		int fd;
 
-		// note that errors will kill the server dead!
 		errwrap(fd = accept(s, NULL, 0));
 		// let's delegate the proper printing of time to an external
 		// program
@@ -83,7 +81,8 @@ main(int argc, char *argv[])
 			err(1, "exec");
 		}
 		// XXX if we forget to close our fd the
-		// client will never finish
+		// client will never finish: a network connection
+		// only gets closed when every fd that refers to it is gone.
 		errwrap(close(fd));
 	}
 }
