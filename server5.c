@@ -71,6 +71,11 @@ create_server(const char *service, bool debug)
 	return s;
 }
 
+// signals handlers have a LOT of restrictions
+// - you can't really use the libc... if you don't play with buffering
+// modes, printing to stderr is okay (because there is NO buffering, so
+// no shared memory with the main process)
+// - system calls are generally okay, but you must preserve the global errno
 void 
 reaper(int sig)
 {
@@ -81,6 +86,8 @@ reaper(int sig)
 	}
 	if (pid == -1 && errno != ECHILD)
 		err(1, "wait3");
+	// XXX if we don't do this, one of the "main" program syscall
+	// may error out with ECHILD, which would be strange !
 	errno = save_errno;
 }
 
