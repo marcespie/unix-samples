@@ -33,20 +33,13 @@ create_servers(const char *service, bool debug, void (*server_loop)(int))
 	int error;
 
 	memset(&hints, 0, sizeof(hints));
-	// XXX we don't specify the family
 	hints.ai_family = AF_UNSPEC;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	// note we may still pass a port name (string)
-	// OR a service (equivalent to getservbyname, cf
-	// /etc/services)
 	error = getaddrinfo(NULL, service, &hints, &res0);
 	if (error)
 		errx(1, "%s", gai_strerror(error));
-	// this is (more or less) the simplest way to use getaddrinfo,
-	// because we're creating a single server on the first address
-	// and we don't really do anything with fun errors.
 	for (res = res0; res; res = res->ai_next) {
 		int s = socket(res->ai_family, res->ai_socktype,
 		    res->ai_protocol);
