@@ -76,8 +76,7 @@ create_servers(const char *service, bool debug, void (*server_loop)(int))
 		success = true;
 	}
 
-	if (success)
-		freeaddrinfo(res0);
+	freeaddrinfo(res0);
 	return success;
 }
 
