@@ -11,6 +11,7 @@ PIPE3OBJS = myfuncs.o pipe3.o
 PIPE4OBJS = myfuncs.o pipe4.o
 PIPE4BADOBJS = myfuncs.o pipe4bad.o
 SERVER1OBJS = myfuncs.o server1.o
+SERVER1LOCALOBJS = myfuncs.o server1local.o
 SERVER2OBJS = myfuncs.o server2.o
 SERVER3OBJS = myfuncs.o server3.o
 SERVER4OBJS = myfuncs.o server4.o
@@ -46,6 +47,9 @@ pipe4bad: ${PIPE4BADOBJS}
 
 server1: ${SERVER1OBJS}
 	${CC} -o $@ ${CFLAGS} ${SERVER1OBJS}
+
+server1local: ${SERVER1LOCALOBJS}
+	${CC} -o $@ ${CFLAGS} ${SERVER1LOCALOBJS}
 
 server2: ${SERVER2OBJS}
 	${CC} -o $@ ${CFLAGS} ${SERVER2OBJS}
