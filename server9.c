@@ -96,6 +96,12 @@ reaper(int sig)
 
 // note that telnet has other "fun" characteristics (try ^C for instance)
 // so we should properly filter more stuff
+
+// XXX note that my "standard" bc(1) has a small bug: if you enter quit
+// on the terminal, since things are buffered per-line, you will get your
+// exit as expected. BUT through a socket, it requires some extra input to
+// actually quit, as the standard input is no longer line-buffered, and
+// somehow the parser doesn't quite cope.
 void
 go_run_command(int fd)
 {
@@ -108,7 +114,7 @@ go_run_command(int fd)
 	errwrap(pipe(pip));
 	errwrap(pid = fork());
 	if (pid == 0) {
-		errwrap(close(pip[0]));
+		eclose(pip[0]);
 		// read from socket, strip cr, pass to bc
 		char buffer[MAXBUF];
 		while (true) {
@@ -123,8 +129,8 @@ go_run_command(int fd)
 					buffer[j++] = buffer[i];
 			safe_write(pip[1], buffer, j);
 		}
-		close(pip[1]);
-		close(fd);
+		eclose(pip[1]);
+		eclose(fd);
 		exit(0);
 
 	} else {
