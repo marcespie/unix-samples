@@ -76,6 +76,17 @@ create_server(const char *service, bool debug)
 // modes, printing to stderr is okay (because there is NO buffering, so
 // no shared memory with the main process)
 // - system calls are generally okay, but you must preserve the global errno
+// - ALSO: if you want to modify ANY variable that's outside of the handler's
+// scope (globals...), that variable MUST be volatile sig_atomic_t
+// (volatile so that the compiler knows something funky is going on and WILL
+// actually obey read/writes instead of optimizing them away, and
+// sig_atomic_t, because otherwise your handler may come in the middle
+// of the main program writing something to that variable, which may have
+// some VERY funny consequences.
+
+// also note: if you have global data structures that signal handlers want
+// to peek at, you can protect them by blocking signals temporarily.
+// See sigprocmask(2) for starters.
 void 
 reaper(int sig)
 {
