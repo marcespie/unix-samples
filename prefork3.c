@@ -68,11 +68,14 @@ create_server(const char *service, bool debug)
 	return s;
 }
 
+#define MAXBUF 1024
 void 
 run_bc(int fd)
 {
 	int pip[2];
 	errwrap(pipe(pip));
+
+	int pid;
 	errwrap(pid = fork());
 	if (pid == 0) {
 		eclose(pip[0]);
@@ -123,7 +126,7 @@ child_services(int s, int pip[])
 		errwrap(write(pip[1], p, 1));
 
 		run_bc(fd);
-
+	}
 }
 
 volatile sig_atomic_t got_sig = 0;
@@ -165,22 +168,25 @@ main(int argc, char *argv[])
 	signal(SIGCHLD, child_notify);
 
 	// initial pool of clients
-	int maxclients = MAXCLIENTS_INIT;
+	int maxclients = 0;
+	int avail = 0;
 	int i;
-	for (i = 0; i != maxclients; i++)
+	for (i = 0; i != MAXCLIENTS_INIT; i++) {
 		child_services(s, pip);
+		avail++;
+		maxclients++;
+	}
 
-	int avail = maxclients;
 
 	struct pollfd fds[1];
 	fds[0].fd = pip[0];
 	fds[0].events = POLLIN;
 
 	while (true) {
-		char buf[50];
+		char buf[MAXBUF];
 		printf("Avail/total: %d/%d\n", avail, maxclients);
 		int n = poll(fds, 1, INFTIM);
-		while (got_sig) {
+		while (true) {
 			got_sig = 0;
 
 			int pid, status;
@@ -188,16 +194,20 @@ main(int argc, char *argv[])
 			if (pid == 0)
 				break;
 			(void)bad_status(status, pid);
+			child_services(s, pip);
+			avail++;
 		}
 		if (n == 1) {
 			ssize_t r = read(pip[0], buf, sizeof buf);
 			avail -= r;
-			if (avail < THRESHOLD)
-				maxclients += 5;
-		}
-		while (avail < maxclients) {
-			child_services(s, pip);
-			avail++;
+			if (avail >= THRESHOLD) 
+				continue;
+
+			for (i = 0; i != 5; i++) {
+				child_services(s, pip);
+				avail++;
+				maxclients++;
+			}
 		}
 	}
 }
