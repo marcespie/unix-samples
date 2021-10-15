@@ -1,6 +1,7 @@
 ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork4 fork5 fork6 \
 	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1 server2 \
-	server3 server4 server5 server6 server7 server8 server9
+	server3 server4 server5 server6 server7 server8 server9 \
+	prefork1 prefork2
 
 
 FORK6OBJS = myfuncs.o fork6.o
@@ -22,6 +23,7 @@ SERVER8OBJS = myfuncs.o server8.o
 SERVER9OBJS = myfuncs.o server9.o
 CHAT1OBJS = myfuncs.o chat1.o
 PREFORK1OBJS = myfuncs.o prefork1.o
+PREFORK2OBJS = myfuncs.o prefork2.o
 
 all: ${ALLPROGS}
 
@@ -81,6 +83,9 @@ chat1: ${CHAT1OBJS}
 
 prefork1: ${PREFORK1OBJS}
 	${CC} -o $@ ${CFLAGS} ${PREFORK1OBJS}
+
+prefork2: ${PREFORK2OBJS}
+	${CC} -o $@ ${CFLAGS} ${PREFORK2OBJS}
 
 clean:
 	-rm -f ${ALLPROGS} *.o

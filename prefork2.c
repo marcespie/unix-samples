@@ -1,4 +1,4 @@
-// prefork example
+// monitoring
 #include <stdbool.h>
 #include <err.h>
 #include <sys/types.h>
@@ -12,6 +12,8 @@
 #include <signal.h>
 #include <getopt.h>
 #include <string.h>
+#include <errno.h>
+#include <poll.h>
 
 #include "myfuncs.h"
 
@@ -66,27 +68,31 @@ create_server(const char *service, bool debug)
 	return s;
 }
 
-// one fairly popular technique is the "prefork" technique:
-// instead of fork()ing on every client connection, which is
-// slow, we fork ahead of time (so we already paid the piper)
-// and we call accept in each child: one of the children will
-// get the accept and handle the call.
 void
-child_services(int s)
+child_services(int s, int pip[])
 {
 	int pid;
 	errwrap(pid = fork());
 	if (pid == 0) {
 		int fd;
 
+		eclose(pip[0]);
 		errwrap(fd = accept(s, NULL, 0));
 		if (fd != 1) {
 			errwrap(dup2(fd, 1));
-			errwrap(close(fd));
+			eclose(fd);
 		}
+		char p[] = {'0'};
+		errwrap(write(pip[1], p, 1));
+		eclose(pip[1]);
 		execlp("date", "date", NULL);
 		err(1, "exec");
 	}
+}
+
+void
+donothing(int sig)
+{
 }
 
 #define MAXCLIENTS 25
@@ -115,31 +121,40 @@ main(int argc, char *argv[])
 	// initial pool of clients
 	int i;
 
+	int pip[2];
+	errwrap(pipe(pip));
+
+	// XXX this is a nasty trick: if we have a signal handler
+	// poll *will* get interrupted and restarted, and thus
+	// we will call wait
+	signal(SIGCHLD, donothing);
 	for (i = 0; i != MAXCLIENTS; i++)
-		child_services(s);
+		child_services(s, pip);
+
+	int avail = MAXCLIENTS;
+
+	struct pollfd fds[1];
+	fds[0].fd = pip[0];
+	fds[0].events = POLLIN;
 
 	while (true) {
-		// and of course we need to replenish each connection that ends
-		int pid, status;
-		errwrap(pid = wait(&status));
-		(void)bad_status(status, pid);
-		child_services(s);
+		char buf[MAXCLIENTS];
+		printf("Avail/total: %d/%d\n", avail, MAXCLIENTS);
+		int n = poll(fds, 1, INFTIM);
+		if (n == -1 && errno == EINTR) {
+			// and of course we need to replenish each connection that ends
+			while (true) {
+				int pid, status;
+				errwrap(pid = wait3(&status, WNOHANG, NULL));
+				if (pid == 0)
+					break;
+				(void)bad_status(status, pid);
+				child_services(s, pip);
+				avail++;
+			}
+		} else {
+			ssize_t r = read(pip[0], buf, sizeof buf);
+			avail -= r;
+		}
 	}
 }
-// further notes for reflexion:
-// - since each accept is independent, supporting multiple address spaces
-// is simple: we just need to allocate some clients for each socket
-// - finding out the proper pool size is tricky. One thing we can do is
-// monitor what's going on: create a pipe, and have each child write a bit
-// of info when it becomes active... Tracking pids for each pool becomes
-// more or less necessary (in any case like we talked about loooong ago, we
-// may have other processes around, so sooner or later, we need to catch
-// only "our" processes.
-// The main code can then call poll() on the pipe (it will get interrupted
-// by signals with a trick) and so we can easily know the occupancy ratio of
-// each pool.
-// (okay, please be careful when handling signals around blocking calls,
-// it is fairly easy to "lose" a signal -- well, not quite lose, but have
-// it arrive at the "wrong time", right after you figured you didn't get
-// any signal...  interaction between blocking calls like poll and wait
-// and signals is one of the trickiest part of basic Unix programming!

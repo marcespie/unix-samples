@@ -15,3 +15,5 @@ extern void print_from(int);
 	} while (0)
 
 #endif
+
+#define eclose(x) errwrap(close(x))
