@@ -138,3 +138,8 @@ main(int argc, char *argv[])
 // The main code can then call poll() on the pipe (it will get interrupted
 // by signals remember ?) and so we can easily know the occupancy ratio of
 // each pool.
+// (okay, please be careful when handling signals around blocking calls,
+// it is fairly easy to "lose" a signal -- well, not quite lose, but have
+// it arrive at the "wrong time", right after you figured you didn't get
+// any signal...  interaction between blocking calls like poll and wait
+// and signals is one of the trickiest part of basic Unix programming!
