@@ -126,3 +126,15 @@ main(int argc, char *argv[])
 		child_services(s);
 	}
 }
+// further notes for reflexion:
+// - since each accept is independent, supporting multiple address spaces
+// is simple: we just need to allocate some clients for each socket
+// - finding out the proper pool size is tricky. One thing we can do is
+// monitor what's going on: create a pipe, and have each child write a bit
+// of info when it becomes active... Tracking pids for each pool becomes
+// more or less necessary (in any case like we talked about loooong ago, we
+// may have other processes around, so sooner or later, we need to catch
+// only "our" processes.
+// The main code can then call poll() on the pipe (it will get interrupted
+// by signals remember ?) and so we can easily know the occupancy ratio of
+// each pool.
