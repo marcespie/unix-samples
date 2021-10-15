@@ -21,6 +21,7 @@ SERVER7OBJS = myfuncs.o server7.o
 SERVER8OBJS = myfuncs.o server8.o
 SERVER9OBJS = myfuncs.o server9.o
 CHAT1OBJS = myfuncs.o chat1.o
+PREFORK1OBJS = myfuncs.o prefork1.o
 
 all: ${ALLPROGS}
 
@@ -77,6 +78,10 @@ server9: ${SERVER9OBJS}
 
 chat1: ${CHAT1OBJS}
 	${CC} -o $@ ${CFLAGS} ${CHAT1OBJS}
+
+prefork1: ${PREFORK1OBJS}
+	${CC} -o $@ ${CFLAGS} ${PREFORK1OBJS}
+
 clean:
 	-rm -f ${ALLPROGS} *.o
 
