@@ -78,10 +78,29 @@ run_bc(int fd)
 	int pid;
 	errwrap(pid = fork());
 	if (pid == 0) {
+		eclose(pip[1]);
+		if (fd != 1) {
+			errwrap(dup2(fd, 1));
+			eclose(fd);
+		}
+		if (pip[0] != 0) {
+			errwrap(dup2(pip[0], 0));
+			errwrap(close(pip[0]));
+		}
+		execlp("bc", "bc", NULL);
+		err(1, "exec");
+	} else {
 		eclose(pip[0]);
 		// read from socket, strip cr, pass to bc
 		char buffer[MAXBUF];
+		struct pollfd p[1];
+		p[0].fd = fd;
+		p[0].events = POLLIN;
 		while (true) {
+			int n = poll(p, 1, INFTIM); 
+			// so our child is dead, basically (quit)
+			if (n == -1 && errno == EINTR)
+				break;
 			ssize_t r;
 			errwrap(r = read(fd, buffer, sizeof buffer));
 			if (r == 0)
@@ -96,18 +115,6 @@ run_bc(int fd)
 		eclose(pip[1]);
 		eclose(fd);
 		exit(0);
-	} else {
-		eclose(pip[1]);
-		if (fd != 1) {
-			errwrap(dup2(fd, 1));
-			eclose(fd);
-		}
-		if (pip[0] != 0) {
-			errwrap(dup2(pip[0], 0));
-			eclose(pip[0]);
-		}
-		execlp("bc", "bc", NULL);
-		err(1, "exec");
 	}
 }
 
