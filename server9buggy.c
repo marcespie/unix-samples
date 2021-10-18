@@ -1,4 +1,6 @@
 // an extra stage to run bc thru telnet
+// XXX this code actually has a subtle bug!
+// can you guess what it is without peeking at the next program ?
 #include <stdbool.h>
 #include <err.h>
 #include <sys/types.h>

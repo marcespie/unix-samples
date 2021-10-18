@@ -1,7 +1,7 @@
 ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork4 fork5 fork6 \
 	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1 server2 \
-	server3 server4 server5 server6 server7 server8 server9 \
-	prefork1 prefork2 prefork3
+	server3 server4 server5 server6 server7 server8 server9buggy \
+	server9 prefork1 prefork2 prefork3
 
 
 FORK6OBJS = myfuncs.o fork6.o
@@ -21,6 +21,7 @@ SERVER6OBJS = myfuncs.o server6.o
 SERVER7OBJS = myfuncs.o server7.o
 SERVER8OBJS = myfuncs.o server8.o
 SERVER9OBJS = myfuncs.o server9.o
+SERVER9BUGGYOBJS = myfuncs.o server9buggy.o
 CHAT1OBJS = myfuncs.o chat1.o
 PREFORK1OBJS = myfuncs.o prefork1.o
 PREFORK2OBJS = myfuncs.o prefork2.o
@@ -75,6 +76,9 @@ server7: ${SERVER7OBJS}
 
 server8: ${SERVER8OBJS}
 	${CC} -o $@ ${CFLAGS} ${SERVER8OBJS}
+
+server9buggy: ${SERVER9BUGGYOBJS}
+	${CC} -o $@ ${CFLAGS} ${SERVER9BUGGYOBJS}
 
 server9: ${SERVER9OBJS}
 	${CC} -o $@ ${CFLAGS} ${SERVER9OBJS}
