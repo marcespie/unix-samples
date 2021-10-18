@@ -3,7 +3,7 @@ ALLPROGS =
 
 all: ${ALLPROGS} MANIFEST libfoo.a
 
-LIBSRC=	reallocarray.c
+LIBSRC=	reallocarray.c emem.c
 LIBOBJS = ${LIBSRC:.c=.o}
 
 libfoo.a: ${LIBOBJS}
