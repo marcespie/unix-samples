@@ -25,3 +25,4 @@ server9.c: fixed bc fork
 prefork1.c: prefork example
 prefork2.c: monitoring
 prefork3.c: monitoring
+chat1.c: a simple interactive chat bot

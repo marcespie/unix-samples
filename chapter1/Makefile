@@ -1,7 +1,7 @@
 ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork4 fork5 fork6 \
 	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1 server2 \
 	server3 server4 server5 server6 server7 server8 server9buggy \
-	server9 prefork1 prefork2 prefork3
+	server9 prefork1 prefork2 prefork3 chat1
 
 
 FORK6OBJS = myfuncs.o fork6.o
@@ -27,7 +27,7 @@ PREFORK1OBJS = myfuncs.o prefork1.o
 PREFORK2OBJS = myfuncs.o prefork2.o
 PREFORK3OBJS = myfuncs.o prefork3.o
 
-all: ${ALLPROGS}
+all: ${ALLPROGS} MANIFEST
 
 pipe1: ${PIPE1OBJS}
 	${CC} -o $@ ${CFLAGS} ${PIPE1OBJS}
@@ -96,10 +96,10 @@ prefork3: ${PREFORK3OBJS}
 	${CC} -o $@ ${CFLAGS} ${PREFORK3OBJS}
 
 clean:
-	-rm -f ${ALLPROGS} *.o
+	-rm -f ${ALLPROGS} MANIFEST *.o
 
 MANIFEST: ${ALLPROGS:=.c}
-	/bin/sh comment2MANIFEST ${ALLPROGS:=.c} >MANIFEST.tmp
+	/bin/sh ../comment2MANIFEST ${ALLPROGS:=.c} >MANIFEST.tmp
 	mv MANIFEST.tmp MANIFEST
 
 .PHONY: all clean
