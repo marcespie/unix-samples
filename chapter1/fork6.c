@@ -8,6 +8,11 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// we moved some pieces into a separate file
+// old school: do not have includes that include other stuff
+// having everything laid out "flat" makes it much easier to
+// (later) handle namespace issues, where you need to rework includes
+// to have less collisions (one of the curses of C)
 #include "myfuncs.h"
 
 void

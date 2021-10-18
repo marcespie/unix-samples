@@ -1,3 +1,4 @@
+// passing child status transparently to caller
 #include <err.h>
 #include <signal.h>
 #include <stdio.h>

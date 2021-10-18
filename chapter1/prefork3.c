@@ -1,4 +1,4 @@
-// monitoring
+// actual monitoring (and adding children when needed)
 #include <err.h>
 #include <errno.h>
 #include <getopt.h>

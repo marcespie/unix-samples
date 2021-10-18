@@ -1,3 +1,4 @@
+// old school server example (don't do that)
 #include <arpa/inet.h>
 #include <err.h>
 #include <netinet/in.h>
