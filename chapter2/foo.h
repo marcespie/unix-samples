@@ -38,4 +38,16 @@ extern void *ecalloc(size_t, size_t);
 #define eclose(x) errwrap(close(x))
 #define epipe(x) errwrap(pipe(x))
 
+// the size/capacity idiom for servers
+// we assume we won't remove servers, so the struct
+// will contain [0, servers[ : sockets for server
+// [servers, n[: sockets for client
+struct myfds {
+	struct pollfd *pfds;
+	size_t servers;
+	size_t n;
+	size_t capacity;
+};
+
+extern void create_servers(struct myfds *, const char *, bool, size_t);
 #endif

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <err.h>
+#include <stdbool.h>
 
 #include "foo.h"
 
