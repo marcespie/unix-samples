@@ -98,4 +98,8 @@ prefork3: ${PREFORK3OBJS}
 clean:
 	-rm -f ${ALLPROGS} *.o
 
+MANIFEST: ${ALLPROGS:=.c}
+	/bin/sh comment2MANIFEST ${ALLPROGS:=.c} >MANIFEST.tmp
+	mv MANIFEST.tmp MANIFEST
+
 .PHONY: all clean

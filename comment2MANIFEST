@@ -1,0 +1,9 @@
+#! /bin/sh
+for i in $*
+do
+    echo -n "$i: "
+    sed -ne '1 {
+    	s,^// *,,
+	p
+	}' $i
+done
