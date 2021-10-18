@@ -1,10 +1,14 @@
 # we gain a library !
-ALLPROGS = 
+ALLPROGS = chat2
 
 all: ${ALLPROGS} MANIFEST libfoo.a
 
-LIBSRC=	reallocarray.c strlcpy.c strlcat.c emem.c create_servers.c
+LIBSRC=	reallocarray.c strlcpy.c strlcat.c emem.c create_servers.c \
+	safe_write.c
 LIBOBJS = ${LIBSRC:.c=.o}
+LINKFLAGS = -L. -lfoo
+
+CHAT2OBJS = chat2.o
 
 libfoo.a: ${LIBOBJS}
 	rm -f $@
@@ -12,6 +16,9 @@ libfoo.a: ${LIBOBJS}
 	ranlib $@
 
 ${LIBOBJS}: foo.h
+
+chat2: ${CHAT2OBJS} libfoo.a
+	${CC} -o $@ ${CFLAGS} ${CHAT2OBJS} ${LINKFLAGS}
 
 clean:
 	-rm -f ${ALLPROGS} libfoo.a MANIFEST *.o

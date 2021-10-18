@@ -1,3 +1,4 @@
+// libfoo: from OpenBSD
 #include "config.h"
 
 #if !HAVE_STRLCPY

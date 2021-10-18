@@ -1,3 +1,4 @@
+// libfoo: function for erroring out on memory error
 #include <stdlib.h>
 #include <err.h>
 #include <stdbool.h>

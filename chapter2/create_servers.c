@@ -1,3 +1,4 @@
+// libfoo: create_servers function -> pollfd
 #include <poll.h>
 #include <stdlib.h>
 #include <string.h>

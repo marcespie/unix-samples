@@ -50,4 +50,5 @@ struct myfds {
 };
 
 extern void create_servers(struct myfds *, const char *, bool, size_t);
+extern void safe_write(int, const void *, size_t);
 #endif

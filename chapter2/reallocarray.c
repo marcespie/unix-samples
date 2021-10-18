@@ -1,3 +1,4 @@
+// libfoo: from OpenBSD
 #include "config.h"
 #if !HAVE_REALLOCARRAY
 /*	$OpenBSD: reallocarray.c,v 1.3 2015/09/13 08:31:47 guenther Exp $	*/
