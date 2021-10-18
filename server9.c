@@ -1,6 +1,3 @@
-// an extra stage to run bc thru telnet
-// XXX this code actually has a subtle bug!
-// can you guess what it is without peeking at the next program ?
 #include <stdbool.h>
 #include <err.h>
 #include <sys/types.h>
@@ -90,18 +87,24 @@ reaper(int sig)
 
 #define MAXBUF 1024
 
-// so we got our socket, we want to run bc BUT it disagrees
-// with telnet (doesn't expect crlf on input
-// so we wrap it as strip_cr | bc
-// like in a real shell pipe, what we care about is when bc
-// exits, so we fork TWICE, and we only monitor bc.
+// I originally wrote this in server9buggy.c:
+//
+// XXX note that my "standard" bc(1) has a small bug: if you enter quit
+// on the terminal, since things are buffered per-line, you will get your
+// exit as expected. BUT through a socket, it requires some extra input to
+// actually quit, as the standard input is no longer line-buffered, and
+// somehow the parser doesn't quite cope.
+//
+// This is a fairly classical pattern: think your tools have bugs, but
+// actually it's your code
 
-// note that telnet has other "fun" characteristics (try ^C for instance)
-// so we should properly filter more stuff
+// here's the bad code with actual comments
 
+#if 0
 void
 go_run_command(int fd)
 {
+	// we need to watch carefully what happens to our socket, fd
 	int pid;
 	errwrap(pid = fork());
 	if (pid != 0) 
@@ -110,7 +113,27 @@ go_run_command(int fd)
 	int pip[2];
 	errwrap(pipe(pip));
 	errwrap(pid = fork());
-	if (pid == 0) {
+	// the socket gets duplicated through the fork, and a socket
+	// is bidirectional !
+	// let's rearrange to have the parent first:
+	if (pid != 0) {
+		errwrap(close(pip[1]));
+		if (fd != 1) {
+			errwrap(dup2(fd, 1));
+			errwrap(close(fd));
+		}
+		if (pip[0] != 0) {
+			errwrap(dup2(pip[0], 0));
+			errwrap(close(pip[0]));
+		}
+		execlp("bc", "bc", NULL);
+		err(1, "exec");
+		// when bc dies, this instance of the socket vanishes
+		// but it does NOT actually get closed.
+		// but the write side of the pipe gets closed
+	} else {
+		// and this is where the problem lies: fd lives too long
+		// here
 		eclose(pip[0]);
 		// read from socket, strip cr, pass to bc
 		char buffer[MAXBUF];
@@ -124,13 +147,38 @@ go_run_command(int fd)
 			for (i = 0, j = 0; i != r; i++)
 				if (buffer[i] != '\r')
 					buffer[j++] = buffer[i];
+			// in the end, the process actually dies on this line:
+			// there's nobody to read our data, so it gets a
+			// SIGPIPE, and we don't notice, since by this point
+			// init has reparented the process and silently drops
+			// the zombie. But note: it needs an EXTRA line that
+			// it tries to write
 			safe_write(pip[1], buffer, j);
 		}
 		eclose(pip[1]);
 		eclose(fd);
 		exit(0);
 
-	} else {
+	}
+}
+#endif
+
+// so how to fix this ?  Usually, on pipes, we do close the ends we don't
+// want. WE CAN'T ACTUALLY DO THAT WITH SOCKETS.  Contrary to usual 
+// filesystem semantics, the shutdown(2) call WILL close the socket, so
+// we have no choice but reverse the parenthood and actually monitor bc !
+void
+go_run_command(int fd)
+{
+	int pid;
+	errwrap(pid = fork());
+	if (pid != 0) 
+		return;
+
+	int pip[2];
+	errwrap(pipe(pip));
+	errwrap(pid = fork());
+	if (pid == 0) {
 		errwrap(close(pip[1]));
 		if (fd != 1) {
 			errwrap(dup2(fd, 1));
@@ -142,6 +190,40 @@ go_run_command(int fd)
 		}
 		execlp("bc", "bc", NULL);
 		err(1, "exec");
+	} else {
+		eclose(pip[0]);
+		// read from socket, strip cr, pass to bc
+		char buffer[MAXBUF];
+		// so: we have the reaper that will take care of our
+		// child for us... The issue is... not being stuck in
+		// the read.
+		// poll can actually help us do that, since we already
+		// have the reaper. But we DON'T want SA_RESTART
+		struct pollfd p[1];
+		p[0].fd = fd;
+		p[0].events = POLLIN;
+
+		while (true) {
+			int n = poll(p, 1, INFTIM); 
+			// so our child is dead, basically (quit)
+			if (n == -1 && errno == EINTR)
+				break;
+			ssize_t r;
+			errwrap(r = read(fd, buffer, sizeof buffer));
+			// ... or we get an EOF
+			if (r == 0)
+				break;
+			size_t i, j;
+			// copy in place since we shrink the buffer
+			for (i = 0, j = 0; i != r; i++)
+				if (buffer[i] != '\r')
+					buffer[j++] = buffer[i];
+			safe_write(pip[1], buffer, j);
+		}
+		eclose(pip[1]);
+		eclose(fd);
+		exit(0);
+
 	}
 }
 int
@@ -174,7 +256,8 @@ main(int argc, char *argv[])
 	sigaction(SIGCHLD, &sa, NULL);
 	while (1) {
 		int n = poll(servers, nservers, INFTIM); 
-
+		if (n == -1 && errno == EINTR)
+			continue;
 		int i;
 		for (i = 0; i != nservers; i++) {
 			if (!(servers[i].revents & POLLIN))
