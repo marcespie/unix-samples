@@ -1,15 +1,16 @@
-#include <stdbool.h>
+// demonstration of Unix domain sockets
 #include <err.h>
 #include <errno.h>
-#include <sys/socket.h>
-#include <sys/un.h>
-#include <sys/stat.h>
 #include <signal.h>
-#include <unistd.h>
-#include <stdlib.h>
+#include <stdbool.h>
 #include <stdio.h>
-#include <time.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <sys/un.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 

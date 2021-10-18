@@ -4,24 +4,24 @@ fork3.c: handling several simple children
 fork3bad.c: check that error handling actually works
 fork3bad2.c: what goes wrong when you do separate writes
 fork4.c: some fairly horrible code that works because of how stdio works
-fork5.c: #include <unistd.h>
+fork5.c: #include <err.h>
 fork6.c: some more simple puzzle pieces with fork
 pipe1.c: use a pipe to talk back to the parent
-pipe1bis.c: the use of fdopen to get "nice" handles (caveats galore: you have
+pipe1bis.c: the use of fdopen to get "nice" handles 
 pipe2.c: actually send structured data back
 pipe3.c: demonstrate showing the results as we get them
 pipe4.c: now we can go back to explicitly waiting on our children
 pipe4bad.c: inject fault (hung child) to see how we fare
-server1.c: #include <stdbool.h>
+server1.c: #include <arpa/inet.h>
 server2.c: first use of exec with redirection
 server3.c: setsockopt + debug mode
-server4.c: modern internet !
-server5.c: with an actual signal handler
-server6.c: binding all address families
+server4.c: modern internet (getaddrinfo)
+server5.c: reap children with a signal handler
+server6.c: modern internet: binding all address families
 server7.c: avoiding fork: using poll
 server8.c: sigaction to avoid EINTR
-server9buggy.c: an extra stage to run bc thru telnet
-server9.c: fixed bc fork
+server9buggy.c: an extra stage to run bc thru telnet (buggy)
+server9.c: fixed bc fork (and we want the EINTR)
 prefork1.c: prefork example
 prefork2.c: monitoring
 prefork3.c: monitoring

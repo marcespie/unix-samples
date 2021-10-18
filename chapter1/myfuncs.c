@@ -1,10 +1,10 @@
-#include <unistd.h>
-#include <sys/wait.h>
 #include <assert.h>
 #include <err.h>
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 

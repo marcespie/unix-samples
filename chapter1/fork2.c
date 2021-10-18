@@ -1,10 +1,10 @@
 // lifting out the error handling code into a separate function
-#include <unistd.h>
 #include <err.h>
-#include <sys/wait.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 void
 perform_computation(int i)

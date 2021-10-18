@@ -1,11 +1,17 @@
 // simple usage of fork and decoding of status
+
 // always minimize includes, since C has one single namespace
-#include <unistd.h>
+//
+// to sort or not to sort ?
+// ISO C includes can be sorted, and most system includes as well
+// beware of the sys/ directory which often has specific ordering rules
+// (watch the SYNOPSIS)
 #include <err.h>	// this is more or less standard these days
-#include <sys/wait.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 void
 perform_computation(int i)

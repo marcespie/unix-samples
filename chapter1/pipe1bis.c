@@ -1,12 +1,13 @@
-// the use of fdopen to get "nice" handles (caveats galore: you have
-// to be more or less CERTAIN your read/writes are small enough)
-#include <unistd.h>
+// the use of fdopen to get "nice" handles 
+// (caveats galore: you have to be more or less CERTAIN your 
+// read/writes are small enough)
 #include <err.h>	// this is more or less standard these days
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 

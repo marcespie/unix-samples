@@ -1,19 +1,19 @@
-// fixed bc fork
-#include <stdbool.h>
+// fixed bc fork (and we want the EINTR)
 #include <err.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <signal.h>
-#include <getopt.h>
-#include <string.h>
 #include <errno.h>
+#include <getopt.h>
+#include <netdb.h>
 #include <poll.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 

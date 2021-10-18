@@ -1,14 +1,14 @@
 // first use of exec with redirection
-#include <stdbool.h>
-#include <err.h>
-#include <sys/socket.h>
-#include <netinet/in.h>
 #include <arpa/inet.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
+#include <err.h>
+#include <netinet/in.h>
 #include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/socket.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 

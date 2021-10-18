@@ -1,11 +1,11 @@
 // use a pipe to talk back to the parent
-#include <unistd.h>
 #include <err.h>	// this is more or less standard these days
-#include <sys/wait.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 

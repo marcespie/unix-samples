@@ -1,21 +1,21 @@
-// an extra stage to run bc thru telnet
+// an extra stage to run bc thru telnet (buggy)
 // XXX this code actually has a subtle bug!
 // can you guess what it is without peeking at the next program ?
-#include <stdbool.h>
 #include <err.h>
-#include <sys/types.h>
-#include <sys/socket.h>
-#include <sys/wait.h>
-#include <netdb.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <signal.h>
-#include <getopt.h>
-#include <string.h>
 #include <errno.h>
+#include <getopt.h>
+#include <netdb.h>
 #include <poll.h>
+#include <signal.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <time.h>
+#include <unistd.h>
 
 #include "myfuncs.h"
 
