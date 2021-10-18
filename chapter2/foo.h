@@ -12,6 +12,15 @@
 extern void *reallocarray(void *, size_t, size_t);
 #endif
 
+#if !HAVE_STRLCPY
+// strlcpy/cat are less error prone than strcpy/cat and (almost) fool-proof
+extern size_t strlcpy(char *, const char *, size_t);
+#endif
+
+#if !HAVE_STRLCAT
+// strlcpy/cat are less error prone than strcpy/cat and (almost) fool-proof
+extern size_t strlcat(char *, const char *, size_t);
+#endif
 // some wrappers for usual C memory functions that just exit when
 // something goes wrong
 extern void *emalloc(size_t);
