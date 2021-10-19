@@ -114,22 +114,18 @@ main(int argc, char *argv[])
     	if (!create_servers(argv[0], debug))
 		errx(1, "Couldn't create any server");
 
+	// normally you either set SA_RESTART, or you look for all reads
+	// since the actual reads occur after the exec, the signal handler
+	// will have been reset, but better safe than sorry
 	struct sigaction sa;
 	sa.sa_handler = reaper;
 	(void)sigemptyset(&sa.sa_mask);
 	sa.sa_flags = SA_RESTART;
 	sigaction(SIGCHLD, &sa, NULL);
 	while (1) {
-		// with SA_RESTART set, the kernel will automatically restart
-		// poll... minutia: process is sleeping on poll, child dies
-		// SIGCHLD gets posted, we interrupt the system call to go
-		// thru the SIGCHLD handler. On return from reaper(), kernel
-		// restarts poll automatically.
-
-		// XXX there might be some shennanigans with properly restarting
-		// with a partial timeout but since we specified infinite 
-		// timeout, this doesn't affect us.
 		int n = poll(servers, nservers, INFTIM); 
+		if (n == -1 && errno == EINTR)
+			continue;
 
 		int i;
 		for (i = 0; i != nservers; i++) {

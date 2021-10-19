@@ -210,6 +210,8 @@ go_run_command(int fd)
 			if (n == -1 && errno == EINTR)
 				break;
 			ssize_t r;
+			// note that read AND write can't return EINTR
+			// since we use SA_RESTART
 			errwrap(r = read(fd, buffer, sizeof buffer));
 			// ... or we get an EOF
 			if (r == 0)
