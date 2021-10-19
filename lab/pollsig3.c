@@ -1,4 +1,4 @@
-// how to handle signals and blocking IO
+// sigaction doesn't affect things
 // poll gets interrupted by signals, if used correctly
 // note that linux introduced ppoll to have finer grained
 // behavior !
