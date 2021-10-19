@@ -1,10 +1,6 @@
 #ifndef MYFUNCS_H 
 #define MYFUNCS_H 1
 
-extern void safe_write(int, const void *, size_t);
-extern bool bad_status(int, int);
-extern void print_from(int);
-
 // a "simple" wrapper for syscall error handling as a macro
 // the do {} while (0) trick allows errwrap(x) to be used alone,
 // or as a "simple expression in a test
