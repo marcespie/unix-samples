@@ -1,0 +1,2 @@
+chat2.c: a simple interactive chat bot
+ttysig.c: the signals that go with tty handling and bg job
