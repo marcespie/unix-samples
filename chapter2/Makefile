@@ -1,5 +1,5 @@
 # we gain a library !
-ALLPROGS = chat2
+ALLPROGS = chat2 ttysig
 
 all: ${ALLPROGS} MANIFEST libfoo.a
 
@@ -9,6 +9,7 @@ LIBOBJS = ${LIBSRC:.c=.o}
 LINKFLAGS = -L. -lfoo
 
 CHAT2OBJS = chat2.o
+TTYSIGOBJS = ttysig.o
 
 libfoo.a: ${LIBOBJS}
 	rm -f $@
@@ -19,6 +20,9 @@ ${LIBOBJS}: foo.h
 
 chat2: ${CHAT2OBJS} libfoo.a
 	${CC} -o $@ ${CFLAGS} ${CHAT2OBJS} ${LINKFLAGS}
+
+ttysig: ${TTYSIGOBJS} libfoo.a
+	${CC} -o $@ ${CFLAGS} ${TTYSIGOBJS} ${LINKFLAGS}
 
 clean:
 	-rm -f ${ALLPROGS} libfoo.a MANIFEST *.o
