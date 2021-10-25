@@ -1,3 +1,4 @@
 pollsig1.c: how to handle signals and blocking IO
 pollsig2.c: signal handler == interrupted poll
 pollsig3.c: sigaction doesn't affect things
+soshutdown.c: the weird semantics of shutdown

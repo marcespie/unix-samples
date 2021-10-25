@@ -1,4 +1,4 @@
-ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork4 fork5 fork6 \
+ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork3pgrp fork4 fork5 fork6 \
 	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1 server2 \
 	server3 server4 server5 server6 server7 server8 server9buggy \
 	server9 prefork1 prefork2 prefork3 chat1

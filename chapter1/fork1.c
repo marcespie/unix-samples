@@ -39,7 +39,8 @@ main()
 	int status;
 	// always check *all* syscalls for errors
 	// always use waitpid *even if you have one single child*
-	// (you never know when you're going to reuse your code)
+	// (you never know when you're going to reuse your code,
+	// in a context with more children)
 	int r = waitpid(pid, &status, 0);
 	if (r == -1)
 		err(1, "waitpid");

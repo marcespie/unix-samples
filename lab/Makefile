@@ -1,4 +1,4 @@
-ALLPROGS = pollsig1 pollsig2 pollsig3
+ALLPROGS = pollsig1 pollsig2 pollsig3 soshutdown
 
 all: ${ALLPROGS} MANIFEST
 
@@ -10,6 +10,9 @@ pollsig2: pollsig2.o
 
 pollsig3: pollsig3.o
 	${CC} -o $@ ${CFLAGS} pollsig3.o
+
+soshutdown: soshutdown.o
+	${CC} -o $@ ${CFLAGS} soshutdown.o
 
 clean:
 	-rm -f ${ALLPROGS} MANIFEST *.o

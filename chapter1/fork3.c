@@ -53,6 +53,22 @@ main()
 	// parent
 	int rc = 0; // by default we succeed
 
+	// XXX don't do that! this is example code.
+	// Here we catch all children, remember that wait is a
+	// "destructive" call, it gives you the status of one
+	// deceased child, and removes all traces from the system.
+	// If you have *other* children in other parts of your code
+	// using wait means you *will* get any child that's dead.
+	// (there's zero guarantee that you get the deceased in
+	// any order at all).
+
+	// there are several solutions
+	// - have a central hub where you register all your children
+	// and somehow demultiplex any status to the correct part of
+	// the code (algorithmic)
+	// - use waitpid NOHANG on each child you want (doesn't scale
+	// with more than a few processes
+	// - put processes into their own groups and use a pgrp
 	int status, r;
 	while ((r = wait(&status)) != -1)
 		if (bad_status(status))
