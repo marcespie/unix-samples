@@ -36,17 +36,21 @@ byebye(int sig)
 void
 tstp_handler(int sig)
 {
+	int save_errno = errno;
+
 	signal(sig, SIG_DFL);
 	errwrap(tcsetattr(0, TCSANOW, &basetty));
 	kill(getpid(), sig);
+	errno = save_errno;
 }
 
 void
 tcont_handler(int sig)
 {
 	int save_errno = errno;
-	errwrap(tcsetattr(0, TCSANOW, &mytty));
 
+	signal(SIGTSTP, tstp_handler);
+	errwrap(tcsetattr(0, TCSANOW, &mytty));
 	errno = save_errno;
 }
 
