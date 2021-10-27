@@ -1,7 +1,8 @@
 ALLPROGS = fork1 fork2 fork3 fork3bad fork3bad2 fork4 fork5 fork6 \
 	pipe1 pipe1bis pipe2 pipe3 pipe4 pipe4bad server1 server2 \
 	server3 server4 server5 server6 server7 server8 server9buggy \
-	server9 prefork1 prefork2 prefork3 chat1 piperead1 piperead2
+	server9 prefork1 prefork2 prefork3 chat1 piperead1 piperead2 \
+	piperead3
 
 
 FORK6OBJS = myfuncs.o fork6.o
@@ -28,6 +29,7 @@ PREFORK2OBJS = myfuncs.o prefork2.o
 PREFORK3OBJS = myfuncs.o prefork3.o
 PIPEREAD1OBJS = myfuncs.o piperead1.o
 PIPEREAD2OBJS = myfuncs.o piperead2.o
+PIPEREAD3OBJS = myfuncs.o piperead3.o
 
 all: ${ALLPROGS} MANIFEST
 
@@ -102,6 +104,9 @@ piperead1: ${PIPEREAD1OBJS}
 
 piperead2: ${PIPEREAD2OBJS}
 	${CC} -o $@ ${CFLAGS} ${PIPEREAD2OBJS}
+
+piperead3: ${PIPEREAD3OBJS}
+	${CC} -o $@ ${CFLAGS} ${PIPEREAD3OBJS}
 
 clean:
 	-rm -f ${ALLPROGS} MANIFEST *.o
