@@ -1,5 +1,5 @@
 # we gain a library !
-ALLPROGS = chat2 ttysig
+ALLPROGS = ttysig
 
 all: ${ALLPROGS} MANIFEST libfoo.a
 
